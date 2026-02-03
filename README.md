@@ -1,36 +1,61 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Uniblox E-commerce Platform
 
-## Getting Started
+A production-ready e-commerce system built with Next.js 15, MongoDB, Better Auth, and ShadCN UI.
 
-First, run the development server:
+## Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **Product Management**: Admin CRUD for products.
+- **Cart System**: User-scoped, server-side validation, persistent in DB.
+- **Checkout**: Order creation, stock management, optimistic locking (basic).
+- **Discount Engine**: Automated 10% discount code generation for every 5th global order.
+- **Authentication**: Role-based access (USER/ADMIN) via Better Auth.
+- **Analytics**: Admin dashboard for revenue and sales tracking.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Architecture
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **/lib**: Core utilities (DB connection, Auth configuration).
+- **/models**: Mongoose schemas (Product, Order, Cart, Discount, User).
+- **/services**: Business logic layer (decoupled from API routes).
+- **/app/api**: Thin route handlers.
+- **/components**: Shadcn UI + Application components.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Setup
 
-## Learn More
+1. **Install Dependencies**:
 
-To learn more about Next.js, take a look at the following resources:
+   ```bash
+   npm install
+   ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+2. **Environment Variables**:
+   Copy `.env.example` to `.env` and configure:
+   - `MONGODB_URI`: Your MongoDB connection string.
+   - `BETTER_AUTH_SECRET`: Random string.
+   - `BETTER_AUTH_URL`: `http://localhost:3000`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+3. **Run Development Server**:
+   ```bash
+   npm run dev
+   ```
 
-## Deploy on Vercel
+## Admin Setup
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+To become an admin:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Register a new user via `/register`.
+2. Access your MongoDB database (collection: `user`).
+3. Update your user document: set `"role": "ADMIN"`.
+   _(Or use a seeding script if provided)_.
+
+## Discount Logic
+
+The system automatically rewards loyal usage platform-wide.
+
+- **Trigger**: Every 5th order (`N_ORDER_THRESHOLD = 5` in `services/discountService.ts`).
+- **Reward**: A unique 10% discount code.
+- **Validity**: 7 days, one-time use.
+- **Validation**: Codes are checked at checkout for validity and expiry.
+
+## License
+
+MIT
