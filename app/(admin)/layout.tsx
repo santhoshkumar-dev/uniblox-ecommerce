@@ -12,7 +12,17 @@ export default async function AdminLayout({
     headers: await headers(),
   });
 
-  if (!session || session.user.role !== "ADMIN") {
+  if (!session) {
+    console.error(
+      "Admin Access Denied: No session found. Check BETTER_AUTH_URL and cookie configuration.",
+    );
+    redirect("/");
+  }
+
+  if (session.user.role !== "ADMIN") {
+    console.error(
+      `Admin Access Denied: User role is '${session.user.role}', expected 'ADMIN'.`,
+    );
     redirect("/");
   }
 

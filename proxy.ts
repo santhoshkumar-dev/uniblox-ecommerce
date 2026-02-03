@@ -6,6 +6,9 @@ export function proxy(request: NextRequest) {
 
   if (request.nextUrl.pathname.startsWith("/admin")) {
     if (!sessionCookie) {
+      console.error(
+        "Admin Access Denied: No session found. Check BETTER_AUTH_URL and cookie configuration.",
+      );
       return NextResponse.redirect(new URL("/", request.url));
     }
   }
