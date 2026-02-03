@@ -1,61 +1,80 @@
-# Uniblox E-commerce Platform
+# Uniblox E-commerce Assessment
 
-A production-ready e-commerce system built with Next.js 15, MongoDB, Better Auth, and ShadCN UI.
+A full-stack e-commerce application built with Next.js, TypeScript, and MongoDB.
 
-## Features
+## Features implemented
 
-- **Product Management**: Admin CRUD for products.
-- **Cart System**: User-scoped, server-side validation, persistent in DB.
-- **Checkout**: Order creation, stock management, optimistic locking (basic).
-- **Discount Engine**: Automated 10% discount code generation for every 5th global order.
-- **Authentication**: Role-based access (USER/ADMIN) via Better Auth.
-- **Analytics**: Admin dashboard for revenue and sales tracking.
+1.  **Product Management**: Browse products, view details, and manage inventory.
+2.  **Cart System**:
+    - Server-side persistent cart.
+    - Optimistic UI for instant quantity updates.
+    - Stock validation prevents adding more than available.
+3.  **Discount Engine**:
+    - **Architecture**: Supports both Public (multi-use) and Private (single-use) codes.
+    - **Automated Rewards**: Every Nth order (default: 5) automatically generates a private, single-use discount code.
+    - **Validation**: Robust API to check validity, expiry, and usage limits before checkout.
+4.  **Admin Dashboard**:
+    - Create and manage custom discount codes.
+    - Analytics dashboard showing Revenue, Items Sold, and Discounts Given.
+5.  **Checkout Flow**:
+    - Apply coupons.
+    - Place orders with atomic stock deduction.
 
-## Architecture
+## Tech Stack
 
-- **/lib**: Core utilities (DB connection, Auth configuration).
-- **/models**: Mongoose schemas (Product, Order, Cart, Discount, User).
-- **/services**: Business logic layer (decoupled from API routes).
-- **/app/api**: Thin route handlers.
-- **/components**: Shadcn UI + Application components.
+- **Framework**: Next.js 15 (App Router)
+- **Language**: TypeScript
+- **Database**: MongoDB (via Mongoose)
+- **Styling**: Tailwind CSS
+- **Authentication**: Better-Auth
 
-## Setup
+## Setup Instructions
 
-1. **Install Dependencies**:
+1.  **Clone the repository**
+2.  **Install dependencies**:
+    ```bash
+    npm install
+    ```
+3.  **Environment Variables**:
+    Create a `.env` file in the root:
+    ```env
+    MONGODB_URI=mongodb://localhost:27017/uniblox-ecommerce
+    BETTER_AUTH_SECRET=your_secret
+    BETTER_AUTH_URL=http://localhost:3000
+    ```
+4.  **Seed the Database** (Optional but recommended):
+    ```bash
+    npm run seed
+    ```
+5.  **Run Development Server**:
+    ```bash
+    npm run dev
+    ```
+    Open [http://localhost:3000](http://localhost:3000).
 
-   ```bash
-   npm install
-   ```
+## Testing
 
-2. **Environment Variables**:
-   Copy `.env.example` to `.env` and configure:
-   - `MONGODB_URI`: Your MongoDB connection string.
-   - `BETTER_AUTH_SECRET`: Random string.
-   - `BETTER_AUTH_URL`: `http://localhost:3000`
+The project includes unit tests for the core business logic.
 
-3. **Run Development Server**:
-   ```bash
-   npm run dev
-   ```
+```bash
+npm test
+```
 
-## Admin Setup
+## API Documentation
 
-To become an admin:
+### Cart
 
-1. Register a new user via `/register`.
-2. Access your MongoDB database (collection: `user`).
-3. Update your user document: set `"role": "ADMIN"`.
-   _(Or use a seeding script if provided)_.
+- `GET /api/cart`: Fetch current user's cart.
+- `POST /api/cart`: Add item (requires `{ productId, quantity }`).
+- `PUT /api/cart`: Update quantity.
 
-## Discount Logic
+### Checkout & Orders
 
-The system automatically rewards loyal usage platform-wide.
+- `POST /api/discounts/validate`: Check if a code is valid.
+- `POST /api/checkout`: Place order.
+- `GET /api/user/orders`: Get order history.
 
-- **Trigger**: Every 5th order (`N_ORDER_THRESHOLD = 5` in `services/discountService.ts`).
-- **Reward**: A unique 10% discount code.
-- **Validity**: 7 days, one-time use.
-- **Validation**: Codes are checked at checkout for validity and expiry.
+### Admin
 
-## License
-
-MIT
+- `GET /api/admin/analytics`: key performance metrics.
+- `POST /api/admin/discounts`: Create manual discount codes.
