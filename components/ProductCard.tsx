@@ -70,6 +70,9 @@ export function ProductCard({ product, initialQuantity = 0 }: ProducCardProps) {
       if (!res.ok) {
         throw new Error("Failed to update cart");
       }
+
+      // Notify Navbar to update count
+      window.dispatchEvent(new Event("cart-updated"));
     } catch (error) {
       console.error(error);
       // Revert on error

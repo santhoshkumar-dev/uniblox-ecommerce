@@ -82,6 +82,9 @@ export default function ProductPage() {
         }),
       });
       if (!res.ok) throw new Error("Failed");
+
+      // Notify Navbar
+      window.dispatchEvent(new Event("cart-updated"));
     } catch (e) {
       setQuantity(prevQty);
       alert("Failed to update cart");

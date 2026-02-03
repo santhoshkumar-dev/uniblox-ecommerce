@@ -61,18 +61,20 @@ export default function CartPage() {
     fetchCart();
   };
 
-  const applyDiscount = async () => {
-    if (!discountCode) return;
+  const applyDiscount = async (codeOverride?: string) => {
+    const code = codeOverride || discountCode;
+    if (!code) return;
     setDiscountLoading(true);
     setAppliedDiscount(null); // Reset previous
     try {
       const res = await fetch("/api/discounts/validate", {
         method: "POST",
-        body: JSON.stringify({ code: discountCode }),
+        body: JSON.stringify({ code }),
       });
       const data = await res.json();
       if (res.ok) {
         setAppliedDiscount(data);
+        if (codeOverride) setDiscountCode(codeOverride);
         // alert("Discount Applied!");
       } else {
         alert(data.error);
@@ -225,7 +227,7 @@ export default function CartPage() {
                   </Button>
                 ) : (
                   <Button
-                    onClick={applyDiscount}
+                    onClick={() => applyDiscount()}
                     disabled={discountLoading || !discountCode}
                   >
                     {discountLoading ? (
@@ -260,7 +262,12 @@ export default function CartPage() {
                 <div
                   key={d._id}
                   onClick={() => {
-                    if (!appliedDiscount) setDiscountCode(d.code);
+                    if (!appliedDiscount) {
+                      setDiscountCode(d.code);
+                      // Optional: Auto-apply on card click too?
+                      // User specifically asked for button change, let's keep card click as 'fill'
+                      // or make consistent. Let's make card click fill, button apply.
+                    }
                   }}
                   className={`border border-dashed border-primary/50 bg-primary/5 p-3 rounded-md cursor-pointer hover:bg-primary/10 transition-colors flex justify-between items-center ${discountCode === d.code ? "ring-2 ring-primary" : ""}`}
                 >
@@ -271,15 +278,14 @@ export default function CartPage() {
                     </p>
                   </div>
                   <Button
-                    variant="ghost"
                     size="sm"
-                    className="h-6 text-xs"
+                    className="h-7 text-xs"
                     onClick={(e) => {
                       e.stopPropagation();
-                      setDiscountCode(d.code);
+                      applyDiscount(d.code);
                     }}
                   >
-                    Copy
+                    Apply
                   </Button>
                 </div>
               ))}
