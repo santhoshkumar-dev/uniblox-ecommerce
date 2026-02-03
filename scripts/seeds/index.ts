@@ -24,18 +24,18 @@ async function seed() {
 
     // Fetch products from Fake Store API
     console.log("Fetching products from Fakestore API...");
-    // const response = await fetch("https://fakestoreapi.com/products");
-    // const products = await response.json();
-    const products: any[] = [
-      {
-        title: "Test Product",
-        description: "Desc",
-        price: 10,
-        image: "img",
-        category: "cat",
-        rating: { rate: 5, count: 10 },
-      },
-    ];
+    const response = await fetch("https://fakestoreapi.com/products");
+    const products = await response.json();
+    // const products: any[] = [
+    //   {
+    //     title: "Test Product",
+    //     description: "Desc",
+    //     price: 10,
+    //     image: "img",
+    //     category: "cat",
+    //     rating: { rate: 5, count: 10 },
+    //   },
+    // ];
 
     console.log(`Found ${products.length} products to seed.`);
 

@@ -133,7 +133,7 @@ export function ProductCard({ product, initialQuantity = 0 }: ProducCardProps) {
         </p>
       </CardContent>
 
-      <CardFooter className="pt-0 pb-4">
+      <CardFooter className="pt-0 pb-4" onClick={(e) => e.stopPropagation()}>
         {quantity > 0 ? (
           <div className="flex items-center justify-between w-full bg-secondary/20 rounded-lg p-1">
             <Button
