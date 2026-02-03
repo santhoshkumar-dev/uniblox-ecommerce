@@ -1,10 +1,35 @@
 import { getAllProducts } from "@/services/productService";
 import { ProductCard } from "@/components/ProductCard";
+import { headers } from "next/headers";
+import { auth } from "@/lib/auth";
+import * as CartService from "@/services/cartService";
 
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
   const products = await getAllProducts();
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  let productQuantities: Record<string, number> = {};
+
+  if (session?.user?.id) {
+    try {
+      const cart = await CartService.getCart(session.user.id);
+      if (cart && cart.items) {
+        cart.items.forEach((item: any) => {
+          // item.productId is populated, so we need to handle that if checking ID
+          const pId = item.productId._id
+            ? item.productId._id.toString()
+            : item.productId.toString();
+          productQuantities[pId] = item.quantity;
+        });
+      }
+    } catch (e) {
+      console.error("Failed to fetch cart for user", e);
+    }
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -33,6 +58,7 @@ export default async function Home() {
             <ProductCard
               key={p._id.toString()}
               product={JSON.parse(JSON.stringify(p))}
+              initialQuantity={productQuantities[p._id.toString()] || 0}
             />
           ))}
         </div>

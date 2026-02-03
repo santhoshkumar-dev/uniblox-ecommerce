@@ -24,7 +24,8 @@ export async function addToCart(
   if (product.stock < quantity) throw new Error("Insufficient stock");
 
   const existingItemIndex = cart.items.findIndex(
-    (item) => item.productId.toString() === productId,
+    (item) =>
+      ((item.productId as any)._id || item.productId).toString() === productId,
   );
 
   if (existingItemIndex > -1) {
@@ -46,11 +47,15 @@ export async function updateCartItem(
 
   if (quantity <= 0) {
     cart.items = cart.items.filter(
-      (item) => item.productId.toString() !== productId,
+      (item) =>
+        ((item.productId as any)._id || item.productId).toString() !==
+        productId,
     );
   } else {
     const item = cart.items.find(
-      (item) => item.productId.toString() === productId,
+      (item) =>
+        ((item.productId as any)._id || item.productId).toString() ===
+        productId,
     );
     if (item) {
       item.quantity = quantity;

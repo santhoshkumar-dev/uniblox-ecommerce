@@ -4,7 +4,7 @@ import mongoose from "mongoose";
 import connectDB from "./db";
 
 // Ensure DB is connected
-connectDB();
+await connectDB();
 
 export const auth = betterAuth({
   database: mongodbAdapter(mongoose.connection.db as any),

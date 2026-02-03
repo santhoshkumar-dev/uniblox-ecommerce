@@ -64,7 +64,7 @@ export async function createOrder(userId: string, discountCode?: string) {
     await DiscountService.markDiscountUsed(
       discountCode,
       userId,
-      order._id as string,
+      order._id.toString(),
     );
   }
 
